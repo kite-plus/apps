@@ -30,8 +30,11 @@ type options struct {
 	only    string
 	summary string
 	held    string
-	dryRun  bool
-	strict  bool
+	// secret is the private key the index is signed with, as minisign
+	// writes it; the index is left unsigned without one.
+	secret string
+	dryRun bool
+	strict bool
 }
 
 func main() {
@@ -45,6 +48,8 @@ func main() {
 	flag.BoolVar(&o.dryRun, "dry-run", false, "check and report without making tags or writing index.json")
 	flag.BoolVar(&o.strict, "strict", false, "fail when an entry's newest release cannot be listed, as a pull request should")
 	flag.Parse()
+
+	o.secret = os.Getenv("MINISIGN_SECRET_KEY")
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
@@ -93,6 +98,9 @@ type outcome struct {
 	blocking  []string
 	proposals []proposal
 	wrote     bool
+	// signed says the signature was written; unsigned that there was no key
+	// to write one with.
+	signed, unsigned bool
 }
 
 // proposal is the pull request that lists a version waiting for approval:
@@ -145,6 +153,12 @@ func (o *outcome) markdown() string {
 	if o.wrote {
 		b.WriteString("index.json was written.\n")
 	}
+	if o.signed {
+		b.WriteString(sigName + " was written.\n")
+	}
+	if o.unsigned {
+		b.WriteString("index.json is not signed: MINISIGN_SECRET_KEY is not set, and Kite refuses an unsigned index.\n")
+	}
 	return b.String()
 }
 
@@ -158,6 +172,12 @@ type runner struct {
 
 func run(ctx context.Context, o options, gh *github) (*outcome, error) {
 	entries, err := loadEntries(o.root)
+	if err != nil {
+		return nil, err
+	}
+	// The key is checked before anything is fetched or written, so that a
+	// wrong one fails the run rather than leaves an index signed by it.
+	key, err := signingKey(o.root, o.secret)
 	if err != nil {
 		return nil, err
 	}
@@ -203,22 +223,30 @@ func run(ctx context.Context, o options, gh *github) (*outcome, error) {
 		}
 	}
 	next.sortApps()
-	if sameApps(prev, next) && prev.Format == indexFormat && prev.Generated != "" {
-		return r.out, nil
-	}
-	next.Generated = time.Now().UTC().Format(time.RFC3339)
+	now := time.Now()
+	changed := !sameApps(prev, next) || prev.Format != indexFormat || prev.Generated == ""
 	if o.dryRun {
 		return r.out, nil
 	}
-	data, err := next.encode()
-	if err != nil {
-		return r.out, err
+	if changed {
+		next.Generated = now.UTC().Format(time.RFC3339)
+		data, err := next.encode()
+		if err != nil {
+			return r.out, err
+		}
+		if err := os.WriteFile(path, data, 0o644); err != nil {
+			return r.out, err
+		}
+		r.out.wrote = true
 	}
-	if err := os.WriteFile(path, data, 0o644); err != nil {
-		return r.out, err
+	// Signed whether or not it changed: the first run with a key signs an
+	// index that was there before it.
+	if key == nil {
+		r.out.unsigned = true
+		return r.out, nil
 	}
-	r.out.wrote = true
-	return r.out, nil
+	r.out.signed, err = signIndex(o.root, *key, now)
+	return r.out, err
 }
 
 // carried is an app as the last index listed it, with what its entry says

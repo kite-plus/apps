@@ -49,9 +49,12 @@ jobs:
           GOPRIVATE: github.com/kite-plus
         run: go install "github.com/kite-plus/kite/cmd/kite@$(cat .github/kite-version)"
 
+      # Kite refuses an index its key did not sign; the private half is
+      # this secret, and minisign.pub is the public half.
       - name: Build the index
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          MINISIGN_SECRET_KEY: ${{ secrets.MINISIGN_SECRET_KEY }}
         run: >-
           go run ./cmd/index
           -kite "$(go env GOPATH)/bin/kite"
@@ -65,12 +68,17 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git push origin --tags
-          if [ -n "$(git status --porcelain -- index.json)" ]; then
+          if [ -n "$(git status --porcelain -- index.json index.json.minisig)" ]; then
             git add index.json
+            if [ -f index.json.minisig ]; then git add index.json.minisig; fi
             git commit -q -m "chore: update the index"
             git push origin HEAD:main
-            # jsDelivr keeps a branch's files for days unless told.
-            curl -fsS --retry 3 "https://purge.jsdelivr.net/gh/$GITHUB_REPOSITORY@main/index.json"
+            # jsDelivr keeps a branch's files for days unless told, and the
+            # index and its signature have to change together.
+            for file in index.json index.json.minisig; do
+              [ -f "$file" ] || continue
+              curl -fsS --retry 3 "https://purge.jsdelivr.net/gh/$GITHUB_REPOSITORY@main/$file"
+            done
           fi
 
       # Each version waiting for approval gets one pull request, which a
