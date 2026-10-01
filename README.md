@@ -27,6 +27,9 @@ and, when jsDelivr does not answer, from
 `https://raw.githubusercontent.com/kite-plus/apps/main/index.json`. Its shape
 is described in [docs/index-format.md](docs/index-format.md).
 
+Since Kite 0.1.5 a site installs from it by name: `kite theme add vane`,
+`kite plugin add search`, or the studio's App center under System.
+
 ## How a version is listed
 
 Every hour, and whenever an entry changes, a workflow reads the releases of
@@ -62,8 +65,7 @@ changes nothing; release a new version instead.
    ```
 
    This writes `dist/<id>-<version>.zip` with only the files a site uses, and
-   prints its size and checksum. The command comes with the Kite release
-   after 0.1.4; until then, `go install github.com/kite-plus/kite/cmd/kite@main`.
+   prints its size and checksum. The command comes with Kite 0.1.5 and later.
 3. Publish a GitHub release tagged `v<version>`, the version in the manifest,
    with the archive attached.
 4. Open a pull request that adds `themes/<id>.yaml` or `plugins/<id>.yaml`:

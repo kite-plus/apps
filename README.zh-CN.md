@@ -22,6 +22,8 @@ https://cdn.jsdelivr.net/gh/kite-plus/apps@main/index.json
 
 jsDelivr 没有响应时，改读 `https://raw.githubusercontent.com/kite-plus/apps/main/index.json`。索引的格式见 [docs/index-format.md](docs/index-format.md)。
 
+从 Kite 0.1.5 开始，站点可以按名字从这里安装：`kite theme add vane`、`kite plugin add search`，或者后台的「系统 → 应用中心」。
+
 ## 一个版本怎样被收录
 
 每小时一次，以及条目有改动时，工作流会读取每个已收录仓库的 Release。标签为 `v<版本号>`、附带 `<id>-<版本号>.zip` 的 Release 会被下载，核对 GitHub 记录的大小和校验和，并按 Kite 安装一个包时的方式检查：
@@ -44,7 +46,7 @@ jsDelivr 没有响应时，改读 `https://raw.githubusercontent.com/kite-plus/a
    kite theme pack    # 或：kite plugin pack
    ```
 
-   它会写出 `dist/<id>-<版本号>.zip`，只包含站点用得到的文件，并打印大小和校验和。这个命令随 0.1.4 之后的下一个 Kite 版本发布；在那之前，请用 `go install github.com/kite-plus/kite/cmd/kite@main`。
+   它会写出 `dist/<id>-<版本号>.zip`，只包含站点用得到的文件，并打印大小和校验和。这个命令从 Kite 0.1.5 开始提供。
 3. 发布一个标签为 `v<版本号>`（即清单里的版本号）的 GitHub Release，并附上这个压缩包。
 4. 提一个 Pull Request，新增 `themes/<id>.yaml` 或 `plugins/<id>.yaml`：
 
