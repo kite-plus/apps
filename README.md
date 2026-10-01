@@ -115,6 +115,19 @@ it to list the version, or closes it to leave the version out.
 approve: [1.2.0]
 ```
 
+## An icon
+
+The studio shows a plugin with its icon when the entry names one: a square
+SVG, PNG, WebP or JPEG in the package's repository.
+
+```yaml
+icon: docs/icon.svg
+```
+
+It is read at the tag of the newest listed version and served by jsDelivr
+from there. An icon weighs at most 64 KB, and an SVG may not script, embed
+or fetch anything; the check says so when one does.
+
 ## Yanking and delisting
 
 ```yaml

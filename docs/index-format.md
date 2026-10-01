@@ -81,6 +81,7 @@ A reader ignores fields it does not know: fields are added without raising
 | `license` | An SPDX expression. |
 | `homepage`, `tags` | As the manifest says, when it does. |
 | `screenshot` | Where a theme's screenshot is served, when it has one. |
+| `icon` | Where a square picture of the package is served, when its entry names one: jsDelivr's copy of that file in its repository at the newest version's tag. It is an SVG that runs and fetches nothing, a PNG, a WebP or a JPEG, of at most 64 KB. |
 | `delisted` | Why the package is no longer listed. A site that has it installed shows this; nothing installs it any more. |
 | `versions` | Its versions, newest first. |
 
