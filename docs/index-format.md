@@ -46,6 +46,16 @@ by name. This page is the contract between the index and Kite.
 }
 ```
 
+## The signature
+
+`index.json.minisig`, beside the index, is its [minisign](https://jedisct1.github.io/minisign/)
+signature by the key in `minisign.pub`, which Kite carries. Kite fetches the
+signature from the same place as the index and uses neither unless the
+signature verifies; it also refuses an index whose `generated` is earlier
+than that of one it has already used, which is how a stale copy would be
+passed off as current. An index of one's own is signed with a key of one's
+own, which `apps.key` in a site's `kite.yaml` names.
+
 ## The index
 
 | Field | Meaning |

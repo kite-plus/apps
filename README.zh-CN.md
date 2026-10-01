@@ -37,6 +37,16 @@ jsDelivr 没有响应时，改读 `https://raw.githubusercontent.com/kite-plus/a
 
 已收录的版本永远不会改变。替换一个已收录 Release 里的压缩包不会有任何效果，请发布新版本。
 
+## 签名
+
+工作流用 [minisign](https://jedisct1.github.io/minisign/) 给 `index.json` 签名，签名放在旁边的 `index.json.minisig` 里。Kite 内置了公钥（也在 [`minisign.pub`](minisign.pub) 里），不管索引从哪个地址取到，没有这把钥匙的签名就拒绝使用，比已经见过的索引更旧的也拒绝。每个压缩包在索引里都用 sha256 标明，所以签名同样保证了包本身。自己核对索引：
+
+```sh
+minisign -Vm index.json -P RWS7FFNcKsshXtrnjri11Qk9W6KWQxa1E+bPNr08Bm4vjNbjqyq+FEEt
+```
+
+私钥是这个仓库的 `MINISIGN_SECRET_KEY` secret。`go run ./cmd/keygen -out <文件>` 生成一对新钥匙；新钥匙要先随一个 Kite 版本发布出去，站点才认得它，所以那个版本要先发。
+
 ## 收录一个主题或插件
 
 1. 把包放在公开的 GitHub 仓库里，在清单中用 SPDX 标识写明开源许可证，比如 `license: MIT`，并在清单旁放一份许可证全文 `LICENSE`。

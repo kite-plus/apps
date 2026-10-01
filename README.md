@@ -53,6 +53,23 @@ GitHub's own download stays as a second address.
 A listed version never changes. Replacing the archive of a listed release
 changes nothing; release a new version instead.
 
+## The signature
+
+The workflow signs `index.json` with [minisign](https://jedisct1.github.io/minisign/)
+into `index.json.minisig`, beside it. Kite carries the public key, also in
+[`minisign.pub`](minisign.pub), and refuses an index this key did not sign,
+whichever address served it, and an index older than one it has already
+seen. Every archive is named in the index by its sha256, so the signature
+covers the packages as well. To check the index by hand:
+
+```sh
+minisign -Vm index.json -P RWS7FFNcKsshXtrnjri11Qk9W6KWQxa1E+bPNr08Bm4vjNbjqyq+FEEt
+```
+
+The private key is the `MINISIGN_SECRET_KEY` secret of this repository.
+`go run ./cmd/keygen -out <file>` makes a new pair; a new key reaches sites
+only with a Kite release that carries it, so that release comes first.
+
 ## Listing a theme or a plugin
 
 1. Keep the package in a public GitHub repository, with an open-source
