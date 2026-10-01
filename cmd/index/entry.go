@@ -31,6 +31,9 @@ type entry struct {
 	// Delisted, when set, says why the package is no longer listed. Sites
 	// that have it installed are told.
 	Delisted string `yaml:"delisted,omitempty"`
+	// Icon is the path, in the package's repository, of a square picture of
+	// it, as the studio shows beside a plugin.
+	Icon string `yaml:"icon,omitempty"`
 
 	file string
 }
@@ -118,6 +121,8 @@ func (e *entry) check(kind, stem string) error {
 		return fmt.Errorf("repo %q is not owner/name on GitHub", e.Repo)
 	case e.Official && !strings.EqualFold(strings.Split(e.Repo, "/")[0], officialOwner):
 		return fmt.Errorf("only packages of %s are official", officialOwner)
+	case e.Icon != "" && !iconPath(e.Icon):
+		return fmt.Errorf("icon %q is not the path of a .svg, .png, .webp or .jpg file in the repository", e.Icon)
 	}
 	for _, list := range [][]string{e.Approve, e.Yanked} {
 		for _, v := range list {

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -100,6 +102,44 @@ func (g *github) download(ctx context.Context, url string, limit int64) ([]byte,
 	}
 	if int64(len(data)) > limit {
 		return nil, fmt.Errorf("the archive is larger than %d MB", limit>>20)
+	}
+	return data, nil
+}
+
+// file reads a file of a repository as it is at ref, refusing one larger
+// than limit.
+func (g *github) file(ctx context.Context, repo, ref, name string, limit int64) ([]byte, error) {
+	parts := strings.Split(name, "/")
+	for i, p := range parts {
+		parts[i] = url.PathEscape(p)
+	}
+	addr := fmt.Sprintf("%s/repos/%s/contents/%s?ref=%s", g.api, repo, strings.Join(parts, "/"), url.QueryEscape(ref))
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, addr, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept", "application/vnd.github.raw+json")
+	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
+	if g.token != "" {
+		req.Header.Set("Authorization", "Bearer "+g.token)
+	}
+	resp, err := g.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = resp.Body.Close() }()
+	switch {
+	case resp.StatusCode == http.StatusNotFound:
+		return nil, fmt.Errorf("%s has no %s at %s", repo, name, ref)
+	case resp.StatusCode != http.StatusOK:
+		return nil, fmt.Errorf("%s: GitHub answered %s", repo, resp.Status)
+	}
+	data, err := io.ReadAll(io.LimitReader(resp.Body, limit+1))
+	if err != nil {
+		return nil, err
+	}
+	if int64(len(data)) > limit {
+		return nil, fmt.Errorf("%s is larger than %d KB", name, limit>>10)
 	}
 	return data, nil
 }

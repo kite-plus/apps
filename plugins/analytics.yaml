@@ -2,3 +2,4 @@ kind: plugin
 id: analytics
 repo: kite-plus/plugin-analytics
 official: true
+icon: docs/icon.svg

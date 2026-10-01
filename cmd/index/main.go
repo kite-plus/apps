@@ -94,7 +94,8 @@ func appendFile(name, text string) error {
 // outcome is what a run did, for its summary.
 type outcome struct {
 	listed, held, failed, skipped []string
-	// blocking are the entries whose newest release could not be listed.
+	// blocking are the entries that could not be listed as they stand: their
+	// newest release, or the icon they name.
 	blocking  []string
 	proposals []proposal
 	wrote     bool
@@ -406,6 +407,7 @@ func (r *runner) refresh(ctx context.Context, e *entry, old *app) *app {
 			a.Screenshot = jsDelivr(r.o.repo, topTag, screenshotName(top.Screenshot))
 		}
 	}
+	r.icon(ctx, e, a)
 	return a
 }
 

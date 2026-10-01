@@ -2,3 +2,4 @@ kind: plugin
 id: math
 repo: kite-plus/plugin-math
 official: true
+icon: docs/icon.svg

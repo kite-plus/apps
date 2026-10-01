@@ -12,20 +12,34 @@ import (
 	"runtime"
 	"slices"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 )
 
-// fakeGitHub serves releases and their assets as GitHub's API does.
+// fakeGitHub serves releases and their assets as GitHub's API does, and the
+// files of repositories at a ref, counting what is read of those.
 type fakeGitHub struct {
 	srv      *httptest.Server
 	releases map[string][]ghRelease
 	files    map[string][]byte
+	contents map[string][]byte
+	reads    atomic.Int32
 }
 
 func newFakeGitHub(t *testing.T) *fakeGitHub {
-	f := &fakeGitHub{releases: map[string][]ghRelease{}, files: map[string][]byte{}}
+	f := &fakeGitHub{releases: map[string][]ghRelease{}, files: map[string][]byte{}, contents: map[string][]byte{}}
 	f.srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if repo, name, ok := strings.Cut(strings.TrimPrefix(r.URL.Path, "/repos/"), "/contents/"); ok {
+			f.reads.Add(1)
+			data, ok := f.contents[repo+"@"+r.URL.Query().Get("ref")+"/"+name]
+			if !ok {
+				http.NotFound(w, r)
+				return
+			}
+			_, _ = w.Write(data)
+			return
+		}
 		if repo, ok := strings.CutPrefix(r.URL.Path, "/repos/"); ok {
 			rels, ok := f.releases[strings.TrimSuffix(repo, "/releases")]
 			if !ok {
@@ -47,6 +61,11 @@ func newFakeGitHub(t *testing.T) *fakeGitHub {
 }
 
 func (f *fakeGitHub) client() *github { return &github{client: f.srv.Client(), api: f.srv.URL} }
+
+// file puts a file in a repository as it is at ref.
+func (f *fakeGitHub) file(repo, ref, name, body string) {
+	f.contents[repo+"@"+ref+"/"+name] = []byte(body)
+}
 
 // release publishes a release; the API lists the newest first.
 func (f *fakeGitHub) release(repo, tag string, published time.Time, assets map[string][]byte) {

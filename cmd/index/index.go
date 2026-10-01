@@ -31,6 +31,9 @@ type app struct {
 	Homepage    string            `json:"homepage,omitempty"`
 	Tags        []string          `json:"tags,omitempty"`
 	Screenshot  string            `json:"screenshot,omitempty"`
+	// Icon is the address of a square picture of the package, from its
+	// repository at its newest version.
+	Icon string `json:"icon,omitempty"`
 	// Delisted says why a package is no longer listed; its versions stay so
 	// that sites that have it installed can be told.
 	Delisted string `json:"delisted,omitempty"`

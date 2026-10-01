@@ -2,3 +2,4 @@ kind: plugin
 id: search
 repo: kite-plus/plugin-search
 official: true
+icon: docs/icon.svg
