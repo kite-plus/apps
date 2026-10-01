@@ -1,0 +1,4 @@
+kind: plugin
+id: analytics
+repo: kite-plus/plugin-analytics
+official: true
