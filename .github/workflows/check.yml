@@ -1,0 +1,92 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Verify formatting
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "These files need gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Install Kite
+        env:
+          GOPRIVATE: github.com/kite-plus
+        run: go install "github.com/kite-plus/kite/cmd/kite@$(cat .github/kite-version)"
+
+      # With a real kite, the test that lists a theme made from scratch runs.
+      - name: Test
+        run: KITE_BIN="$(go env GOPATH)/bin/kite" go test -race -count=1 ./...
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.13.2
+
+  entries:
+    name: Check the entries
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install Kite
+        env:
+          GOPRIVATE: github.com/kite-plus
+        run: go install "github.com/kite-plus/kite/cmd/kite@$(cat .github/kite-version)"
+
+      # An entry the pull request adds or changes must have its newest
+      # release listable; with none, every entry is looked at, as the next
+      # index would be built, without failing on a package's own trouble.
+      - name: Check what the index would list
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          only=$(git diff --name-only --diff-filter=AM "$BASE" HEAD -- 'themes/*.yaml' 'plugins/*.yaml' \
+            | sed -E 's#^themes/(.+)\.yaml$#theme/\1#; s#^plugins/(.+)\.yaml$#plugin/\1#' | paste -sd, -)
+          strict=""
+          if [ -n "$only" ]; then strict="-strict"; fi
+          go run ./cmd/index -dry-run $strict -only "$only" \
+            -kite "$(go env GOPATH)/bin/kite" \
+            -repo "$GITHUB_REPOSITORY" \
+            -summary "$GITHUB_STEP_SUMMARY"

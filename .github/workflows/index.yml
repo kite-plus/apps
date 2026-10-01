@@ -1,0 +1,104 @@
+name: Index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "themes/**"
+      - "plugins/**"
+      - "cmd/**"
+      - "go.mod"
+      - "go.sum"
+      - ".github/kite-version"
+      - ".github/workflows/index.yml"
+  # New releases of listed packages are picked up within the hour.
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+# Two runs at once would tag and commit over each other.
+concurrency:
+  group: index
+  cancel-in-progress: false
+
+jobs:
+  index:
+    name: Build the index
+    runs-on: ubuntu-24.04
+    steps:
+      # The tip of main rather than the commit that started the run, which
+      # a run queued behind another may have left behind.
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      # Straight from GitHub: the module proxy can take a while to see a
+      # new commit of Kite.
+      - name: Install Kite
+        env:
+          GOPRIVATE: github.com/kite-plus
+        run: go install "github.com/kite-plus/kite/cmd/kite@$(cat .github/kite-version)"
+
+      - name: Build the index
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          go run ./cmd/index
+          -kite "$(go env GOPATH)/bin/kite"
+          -repo "$GITHUB_REPOSITORY"
+          -summary "$GITHUB_STEP_SUMMARY"
+          -held "$RUNNER_TEMP/held.json"
+
+      # Tags first: the index must not name an archive that is not served.
+      - name: Publish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git push origin --tags
+          if [ -n "$(git status --porcelain -- index.json)" ]; then
+            git add index.json
+            git commit -q -m "chore: update the index"
+            git push origin HEAD:main
+            # jsDelivr keeps a branch's files for days unless told.
+            curl -fsS --retry 3 "https://purge.jsdelivr.net/gh/$GITHUB_REPOSITORY@main/index.json"
+          fi
+
+      # Each version waiting for approval gets one pull request, which a
+      # maintainer merges to list it or closes to leave it out. Where the
+      # organization does not let workflows open pull requests, an issue
+      # links to the change instead.
+      - name: Propose approvals
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          jq -c '.[]' "$RUNNER_TEMP/held.json" | while read -r held; do
+            field() { jq -j ".$1" <<<"$held"; }
+            branch=$(field branch)
+            title=$(field title)
+            if [ -n "$(gh pr list --head "$branch" --state all --json number --jq '.[].number')" ] ||
+              gh issue list --state all --search "\"$title\" in:title" --json title --jq '.[].title' | grep -Fqx "$title"; then
+              continue
+            fi
+            git switch -q -c "$branch" main
+            field entry > "$(field file)"
+            git commit -q -am "$title"
+            git push -q -f origin "$branch"
+            git switch -q main
+            if ! field body | gh pr create --base main --head "$branch" --title "$title" --body-file -; then
+              {
+                field body
+                printf '\nOpen the pull request: %s/%s/compare/main...%s?expand=1\n' \
+                  "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$branch"
+              } | gh issue create --title "$title" --body-file -
+            fi
+          done
