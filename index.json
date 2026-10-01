@@ -1,0 +1,354 @@
+{
+  "format": 1,
+  "generated": "2026-10-01T08:28:38Z",
+  "apps": [
+    {
+      "kind": "plugin",
+      "id": "analytics",
+      "official": true,
+      "repo": "kite-plus/plugin-analytics",
+      "title": {
+        "en": "Analytics",
+        "zh-CN": "访问统计"
+      },
+      "description": {
+        "en": "Counts visits with Baidu Tongji, Google Analytics, Umami or Plausible.",
+        "zh-CN": "用百度统计、Google Analytics、Umami 或 Plausible 统计访问量。"
+      },
+      "author": {
+        "name": "Kite",
+        "url": "https://github.com/kite-plus"
+      },
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/kite-plus/plugin-analytics",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "published": "2026-09-26T18:28:50Z",
+          "notes": "https://github.com/kite-plus/plugin-analytics/releases/tag/v0.1.0",
+          "api": "kite/plugin/v1",
+          "requires": ">=0.1.0 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@plugin-analytics-0.1.0/analytics-0.1.0.zip",
+              "https://github.com/kite-plus/plugin-analytics/releases/download/v0.1.0/analytics-0.1.0.zip"
+            ],
+            "sha256": "077e540c3da8cd0e2c73656a77a12b19a2cf38f0ef742cab8315cc9a4107a17c",
+            "size": 8636
+          },
+          "loads": [
+            "cloud.umami.is",
+            "hm.baidu.com",
+            "plausible.io",
+            "www.googletagmanager.com"
+          ],
+          "inject": 4
+        }
+      ]
+    },
+    {
+      "kind": "plugin",
+      "id": "comments",
+      "official": true,
+      "repo": "kite-plus/plugin-comments",
+      "title": {
+        "en": "Comments",
+        "zh-CN": "评论"
+      },
+      "description": {
+        "en": "A comment thread under every post, with Giscus, Waline or Twikoo.",
+        "zh-CN": "在每篇文章下放一个评论区，支持 Giscus、Waline 和 Twikoo。"
+      },
+      "author": {
+        "name": "Kite",
+        "url": "https://github.com/kite-plus"
+      },
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/kite-plus/plugin-comments",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "published": "2026-09-26T18:28:52Z",
+          "notes": "https://github.com/kite-plus/plugin-comments/releases/tag/v0.1.0",
+          "api": "kite/plugin/v1",
+          "requires": ">=0.1.0 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@plugin-comments-0.1.0/comments-0.1.0.zip",
+              "https://github.com/kite-plus/plugin-comments/releases/download/v0.1.0/comments-0.1.0.zip"
+            ],
+            "sha256": "f02cbcaaadfd5f433f539be2b0a4826a5512b7f86cb769df7b096d4300afb1b3",
+            "size": 11684
+          },
+          "loads": [
+            "cdn.jsdelivr.net",
+            "giscus.app",
+            "registry.npmmirror.com",
+            "unpkg.com"
+          ],
+          "inject": 2
+        }
+      ]
+    },
+    {
+      "kind": "plugin",
+      "id": "math",
+      "official": true,
+      "repo": "kite-plus/plugin-math",
+      "title": {
+        "en": "Math and Diagrams",
+        "zh-CN": "公式与图表"
+      },
+      "description": {
+        "en": "Typesets TeX math with KaTeX and draws mermaid code blocks as diagrams.",
+        "zh-CN": "用 KaTeX 排版 TeX 公式，把 mermaid 代码块画成图表。"
+      },
+      "author": {
+        "name": "Kite",
+        "url": "https://github.com/kite-plus"
+      },
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/kite-plus/plugin-math",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "published": "2026-09-26T18:29:02Z",
+          "notes": "https://github.com/kite-plus/plugin-math/releases/tag/v0.1.0",
+          "api": "kite/plugin/v1",
+          "requires": ">=0.1.0 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@plugin-math-0.1.0/math-0.1.0.zip",
+              "https://github.com/kite-plus/plugin-math/releases/download/v0.1.0/math-0.1.0.zip"
+            ],
+            "sha256": "e35c847618810bad814ca281f871fde1d5ae3e7d429d11d48a2837778cb8275a",
+            "size": 949054
+          },
+          "loads": [
+            "cdn.jsdelivr.net",
+            "registry.npmmirror.com",
+            "unpkg.com"
+          ],
+          "inject": 1,
+          "hooks": [
+            "transform_markdown"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "plugin",
+      "id": "search",
+      "official": true,
+      "repo": "kite-plus/plugin-search",
+      "title": {
+        "en": "Search",
+        "zh-CN": "站内搜索"
+      },
+      "description": {
+        "en": "Lets readers search every post and page, in their browser and without a server.",
+        "zh-CN": "让读者在浏览器里搜索全部文章和页面，不需要服务端。"
+      },
+      "author": {
+        "name": "Kite",
+        "url": "https://github.com/kite-plus"
+      },
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/kite-plus/plugin-search",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "published": "2026-09-26T18:29:17Z",
+          "notes": "https://github.com/kite-plus/plugin-search/releases/tag/v0.1.0",
+          "api": "kite/plugin/v1",
+          "requires": ">=0.1.0 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@plugin-search-0.1.0/search-0.1.0.zip",
+              "https://github.com/kite-plus/plugin-search/releases/download/v0.1.0/search-0.1.0.zip"
+            ],
+            "sha256": "20dee262d440cc4ebe5053d27ab46a3c11f346ebc9c95771b54285ff5fdfc59a",
+            "size": 1001406
+          },
+          "loads": [],
+          "inject": 2,
+          "hooks": [
+            "build_complete"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "theme",
+      "id": "almanac",
+      "official": true,
+      "repo": "kite-plus/theme-almanac",
+      "title": {
+        "en": "Almanac",
+        "zh-CN": "年鉴"
+      },
+      "description": {
+        "en": "A minimal, content-rich personal hub. A magazine masthead over a feed of cards, shelves for projects, books and films, moments, friend links and a resume, on cream paper by day and warm ink by night, with nothing loaded from third parties unless you ask for it.",
+        "zh-CN": "极简、内容向的个人站点主题。杂志风刊头下是一列卡片，另有项目、书影、动态、友链和简历页；白天是奶油色的纸，夜里是暖色的墨，除非你要求，不从第三方加载任何资源。"
+      },
+      "author": {
+        "name": "Amigoer",
+        "url": "https://www.amigoer.com"
+      },
+      "license": "MIT",
+      "homepage": "https://github.com/kite-plus/theme-almanac",
+      "tags": [
+        "blog",
+        "personal",
+        "portfolio",
+        "magazine",
+        "dark mode"
+      ],
+      "screenshot": "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-almanac-0.1.2/screenshot.webp",
+      "versions": [
+        {
+          "version": "0.1.2",
+          "published": "2026-10-01T07:02:34Z",
+          "notes": "https://github.com/kite-plus/theme-almanac/releases/tag/v0.1.2",
+          "api": "kite/v1",
+          "requires": ">=0.1.4 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-almanac-0.1.2/almanac-0.1.2.zip",
+              "https://github.com/kite-plus/theme-almanac/releases/download/v0.1.2/almanac-0.1.2.zip"
+            ],
+            "sha256": "d741e8ee000fc126687b36b73255e3d04ea7940baf3472de4d17f73db63cf142",
+            "size": 177329
+          },
+          "loads": []
+        },
+        {
+          "version": "0.1.1",
+          "published": "2026-10-01T06:19:39Z",
+          "notes": "https://github.com/kite-plus/theme-almanac/releases/tag/v0.1.1",
+          "api": "kite/v1",
+          "requires": ">=0.1.2 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-almanac-0.1.1/almanac-0.1.1.zip",
+              "https://github.com/kite-plus/theme-almanac/releases/download/v0.1.1/almanac-0.1.1.zip"
+            ],
+            "sha256": "2b1e8fe7f2811429391c3e2ebfe9c9d6de4fbc6de67a226391081671be128e21",
+            "size": 176356
+          },
+          "loads": []
+        },
+        {
+          "version": "0.1.0",
+          "published": "2026-09-29T10:22:29Z",
+          "notes": "https://github.com/kite-plus/theme-almanac/releases/tag/v0.1.0",
+          "api": "kite/v1",
+          "requires": ">=0.1.2 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-almanac-0.1.0/almanac-0.1.0.zip",
+              "https://github.com/kite-plus/theme-almanac/releases/download/v0.1.0/almanac-0.1.0.zip"
+            ],
+            "sha256": "8df5dfc9723aba42909d91e5193c1f6b7517e868ba95ccbde660c6b955f146a6",
+            "size": 176048
+          },
+          "loads": []
+        }
+      ]
+    },
+    {
+      "kind": "theme",
+      "id": "vane",
+      "official": true,
+      "repo": "kite-plus/theme-vane",
+      "title": {
+        "en": "Vane",
+        "zh-CN": "风标"
+      },
+      "description": {
+        "en": "A documentation theme for product docs, project sites and knowledge bases, drawn on paper in ink. A home page with a kite in its sky, docs in an ordered tree with a table of contents, and news, by day and by night, with nothing loaded from third parties.",
+        "zh-CN": "为产品文档、项目官网和知识库设计的文档主题，纸上落墨。天空里飘着风筝的首页、按顺序排列的文档目录、页内目录和新闻，白天与夜晚两种样子，不从第三方加载任何资源。"
+      },
+      "author": {
+        "name": "Kite",
+        "url": "https://github.com/kite-plus"
+      },
+      "license": "Apache-2.0",
+      "homepage": "https://github.com/kite-plus/theme-vane",
+      "tags": [
+        "docs",
+        "documentation",
+        "paper",
+        "serif",
+        "dark mode"
+      ],
+      "screenshot": "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-vane-1.0.1/screenshot.webp",
+      "versions": [
+        {
+          "version": "1.0.1",
+          "published": "2026-10-01T07:09:06Z",
+          "notes": "https://github.com/kite-plus/theme-vane/releases/tag/v1.0.1",
+          "api": "kite/v1",
+          "requires": ">=0.1.4 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-vane-1.0.1/vane-1.0.1.zip",
+              "https://github.com/kite-plus/theme-vane/releases/download/v1.0.1/vane-1.0.1.zip"
+            ],
+            "sha256": "da82c093d5e466e0de1bbd8bd075f628aa71a50fa5084bc76437ac4b8cec2947",
+            "size": 108040
+          },
+          "loads": []
+        },
+        {
+          "version": "1.0.0",
+          "published": "2026-10-01T06:19:11Z",
+          "notes": "https://github.com/kite-plus/theme-vane/releases/tag/v1.0.0",
+          "api": "kite/v1",
+          "requires": ">=0.1.4 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-vane-1.0.0/vane-1.0.0.zip",
+              "https://github.com/kite-plus/theme-vane/releases/download/v1.0.0/vane-1.0.0.zip"
+            ],
+            "sha256": "729959d4d4a804e380bdf0e9f9f5a01078cdb5992ca5af3f4ddd015e304fcdd4",
+            "size": 107943
+          },
+          "loads": []
+        },
+        {
+          "version": "0.2.0",
+          "published": "2026-09-27T13:01:13Z",
+          "notes": "https://github.com/kite-plus/theme-vane/releases/tag/v0.2.0",
+          "api": "kite/v1",
+          "requires": ">=0.1.0 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-vane-0.2.0/vane-0.2.0.zip",
+              "https://github.com/kite-plus/theme-vane/releases/download/v0.2.0/vane-0.2.0.zip"
+            ],
+            "sha256": "d36f961d213241e97cc3d29226309cfa0c47c5578eb81b283b63b39f949f0aaf",
+            "size": 107303
+          },
+          "loads": []
+        },
+        {
+          "version": "0.1.0",
+          "published": "2026-09-27T13:13:10Z",
+          "notes": "https://github.com/kite-plus/theme-vane/releases/tag/v0.1.0",
+          "api": "kite/v1",
+          "requires": ">=0.1.0 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-vane-0.1.0/vane-0.1.0.zip",
+              "https://github.com/kite-plus/theme-vane/releases/download/v0.1.0/vane-0.1.0.zip"
+            ],
+            "sha256": "bdd9b0b67cb8d3b1ca07803fb9b12d80f07fcbca26e6aca4fb316f885b572693",
+            "size": 85775
+          },
+          "loads": []
+        }
+      ]
+    }
+  ]
+}
