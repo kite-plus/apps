@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "generated": "2026-10-01T08:28:38Z",
+  "generated": "2026-10-01T19:45:11Z",
   "apps": [
     {
       "kind": "plugin",
@@ -282,8 +282,24 @@
         "serif",
         "dark mode"
       ],
-      "screenshot": "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-vane-1.0.1/screenshot.webp",
+      "screenshot": "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-vane-1.0.2/screenshot.webp",
       "versions": [
+        {
+          "version": "1.0.2",
+          "published": "2026-10-01T19:44:34Z",
+          "notes": "https://github.com/kite-plus/theme-vane/releases/tag/v1.0.2",
+          "api": "kite/v1",
+          "requires": ">=0.1.4 <2.0.0",
+          "archive": {
+            "urls": [
+              "https://cdn.jsdelivr.net/gh/kite-plus/apps@theme-vane-1.0.2/vane-1.0.2.zip",
+              "https://github.com/kite-plus/theme-vane/releases/download/v1.0.2/vane-1.0.2.zip"
+            ],
+            "sha256": "e7ac176cb036d1ffd135304d31a18722fafd53e10c3d5bbb520d7807b89d3639",
+            "size": 109335
+          },
+          "loads": []
+        },
         {
           "version": "1.0.1",
           "published": "2026-10-01T07:09:06Z",
