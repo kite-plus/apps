@@ -3,3 +3,4 @@ id: comments
 repo: kite-plus/plugin-comments
 official: true
 icon: docs/icon.svg
+approve: [0.2.0]
